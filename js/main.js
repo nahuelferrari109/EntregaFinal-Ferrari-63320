@@ -1,121 +1,128 @@
+let alumnos = [];
 
 /* 
-Esta funcion sirve para saber cuantas notas va a ingresar el profesor
- y validar para que no sea nulo
+Esta función captura cuántas notas ingresará el profesor y valida que no sea nulo.
 */
-function cantidadNota(){
-    
-    const contador = 3
-   
-    let cantidadNotas;
-    
-    for (let i = 0 ; i < contador; i++){
-        cantidadNotas = parseFloat(prompt("Ingrese la cantidad de notas del alumno: "));
+function capturarCantidadNotas() {
+    const intentosMaximos = 3;
+    let intentos = 0;
 
-        if(cantidadNotas > 0){
-        
-        return cantidadNotas;
-       }
-       
-       else{
-        
-        alert ("La cantidad debe ser  major a 0. Intente nuevamente: ")
-        
-        
+    while (intentos < intentosMaximos) {
+        const cantidadNotas = parseFloat(prompt("Ingrese la cantidad de notas del alumno: "));
+
+        if (cantidadNotas > 0) {
+            return cantidadNotas; // Sale de la función si el valor es válido.
+        } else {
+            alert("La cantidad debe ser mayor a 0. Intente nuevamente.");
+            intentos++;
         }
-    
     }
-   
-    return  alert("Ingreso mal la cantidad 3 veces reinicie la pagina.");
+
+    alert("Se ingresaron datos inválidos 3 veces. Reinicie la página.");
+    return 0; // Retorna 0 si se agotaron los intentos.
 }
 
-
-
 /* 
-Esta funcion suma notas las notas ingresadas por el profesor y verifica que sean numeros.
+Esta función suma las notas ingresadas por el profesor y verifica que sean números válidos.
 */
-function sumaDeNotas(cantidadNotas){
-    
-    let sumaDeNotas = 0
-    
-    for (let i = 0 ; i < cantidadNotas ; i++ ){
-        
-        const notas = parseInt(prompt("Ingrese la nota del alumno: "));
-        
-        if(!isNaN(notas)){
-            
-            sumaDeNotas = sumaDeNotas + notas;
-        
+function sumaDeNotas(cantidadNotas) {
+    let suma = 0;
+
+    for (let i = 0; i < cantidadNotas; i++) {
+        const nota = parseFloat(prompt(`Ingrese la nota del alumno (entre 0 y 10): `));
+
+        if (!isNaN(nota) && nota >= 0 && nota <= 10) {
+            suma += nota;
+        } else {
+            alert("Ingrese nuevamente un número válido para la nota.");
+            i--; // Repetir el intento para esta nota.
         }
-        else{
-            
-            alert("Ingrese nuevamente un numero valido para la nota");
-            i--;
-        }
-    
     }
-    
-    return sumaDeNotas;
 
+    return suma;
 }
 
 /* 
-Esta funcion saca el promedio de las notas.
+Esta función calcula el promedio de las notas.
 */
-
-function promedio (cantidadNotas, sumaDeNotas){
-
-    const promedio = sumaDeNotas / cantidadNotas;
-
-    return promedio;
+function calcularPromedio(cantidadNotas, sumaDeNotas) {
+    return sumaDeNotas / cantidadNotas;
 }
-
 
 /* 
-Esta funcion te dice si el alumno promociono, aprobo o desaprobo la materia.
-*/ 
-function promocion (cantidadNotas){
-    
-    const totalNotas =  sumaDeNotas(cantidadNotas);
-
-    const prom = promedio(cantidadNotas , totalNotas);
-
-    if (cantidadNotas === 0){
-        return "No se puede calcular la promocion porque no se ingresaron notas.";
-    }
-
-    const promocion = (prom >= 7);
-    const aprobado = (prom >= 4) && (prom < 7) ;
-    const desaprobado = (prom < 4);
-    
-    if (promocion){
-       return "Felicitaciones promocionaste no tenes que rendir final. Tu nota es: "+ prom;
-    }
-    else if (aprobado) {
-        return "Felcitaciones aprobaste la materias un paso mas que tenes que rendir el final. Tu nota es: "+ prom;
-    }
-    else if (desaprobado){
-        return "Lamentablemente desprobaste la materia por lo tanto la tenes que recursar. Tu nota es: "+ prom;
+Esta función evalúa si el alumno promocionó, aprobó o desaprobó la materia.
+*/
+function promocion(promedio) {
+    if (promedio >= 7) {
+        return "Felicitaciones, promocionaste. Tu promedio es: " + promedio.toFixed(2);
+    } else if (promedio >= 4) {
+        return "Aprobaste la materia. Deberás rendir el final. Tu promedio es: "+ promedio.toFixed(2);
+    } else {
+        return "Desaprobaste la materia. Tu promedio es: " + promedio.toFixed(2) ;
     }
 }
 
-
-/*
-Esta funcion pide el nombre y apellido y le dice al alumno que nota tiene.
+/* 
+Función para buscar un alumno por su nombre o apellido.
 */
-function mensajeDeNota (promocion){
-    
+function buscarAlumno(busqueda) {
+    return alumnos.filter(alumno =>
+        alumno.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
+        alumno.apellido.toLowerCase().includes(busqueda.toLowerCase())
+    );
+}
+
+/* 
+Función para mostrar el resultado del alumno y guardar sus datos.
+*/
+function mostrarResultado() {
     const nombreAlumno = prompt("Ingrese el nombre del alumno: ");
     const apellidoAlumno = prompt("Ingrese el apellido del alumno: ");
-    
-    const espacio = " ";
-    
-    alert(apellidoAlumno + espacio + nombreAlumno + espacio + promocion);
-    
+
+    if (!nombreAlumno || !apellidoAlumno) {
+        alert("El nombre y apellido son obligatorios. Intente nuevamente.");
+        return;
+    }
+
+    const cantidadNotas = capturarCantidadNotas();
+    if (cantidadNotas === 0) return; // Detener si no se ingresaron notas válidas.
+
+    const suma = sumaDeNotas(cantidadNotas);
+    const promedio = calcularPromedio(cantidadNotas, suma);
+    const mensajeDePromocion = promocion(promedio);
+
+    const alumno = {
+        nombre: nombreAlumno,
+        apellido: apellidoAlumno,
+        promedioAlumno: promedio,
+    };
+
+    alumnos.push(alumno);
+    alert(`${alumno.apellido} ${alumno.nombre}: ${mensajeDePromocion}`);
 }
 
+/* 
+Función para buscar un alumno y mostrar sus datos.
+*/
+function busquedaAlumno() {
+    const busqueda = prompt("Ingrese el nombre o el apellido del alumno a buscar: ");
 
-// PPL
-const cantidadDenotas = cantidadNota()
-mensajeDeNota(promocion(cantidadDenotas));
+    if (!busqueda) {
+        alert("Debe ingresar un criterio de búsqueda.");
+        return;
+    }
 
+    const resultado = buscarAlumno(busqueda);
+
+    if (resultado.length > 0) {
+        resultado.forEach(alumno => {
+            alert( "Alumno: " + alumno.apellido + " " + alumno.nombre + " Promedio: " + alumno.promedioAlumno.toFixed(2));
+        });
+    } else {
+        alert("No se encontraron alumnos que coincidan con el criterio de búsqueda.");
+    }
+}
+
+// Programa Principal
+mostrarResultado();
+busquedaAlumno();
