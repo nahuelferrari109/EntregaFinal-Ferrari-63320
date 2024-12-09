@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+      
+
+        table {
+            margin-top: 1rem;
+            
+        }
+
+        table, th, td {
+            border: 1px solid rgb(165, 4, 4);
+            padding: 0.5rem;
+        }
+       
+        .ocultar-elemento {
+            display: none;
+        }
+    </style>
+
+</head>
+
+<body>
+    
+    <h1>Promedio para alumnos</h1>
+    <h2>Filtrar alumno</h2>
+   
+    <input type="text" id="buscarAlumno" placeholder="Nombre del alumno..." />
+
+    
+    <table>
+        <thead> 
+            <tr>
+                <th>NOMBRE</th>
+                <th>APELLIDO</th>
+                <th>NOTA 1</th>
+                <th>NOTA 2</th>
+                <th>NOTA 3</th>
+                <th>NOTA FINAL</th>
+            </tr>
+            <tbody id="tbodyAlumnos"></tbody>
+        </thead>
+    </table>
+
+    <form id="formAgregarAlumno" style="margin-top: 1rem">
+        <input type="text" id="nombreAlumno" placeholder="Nombre" />
+        <input type="text" id="apellidoAlumno" placeholder="Apellido" />
+        <input type="text" id="nota1Alumno" placeholder="Nota 1" />
+        <input type="text" id="nota2Alumno" placeholder="Nota 2" />
+        <input type="text" id="nota3Alumno" placeholder="Nota 3" />
+        
+    
+        <button type="submit">Agregar alumno</button>
+    </form>
+
+
+
+
+       <script  src="js/main.js"></script></script>
+
+</body>
+</html>
