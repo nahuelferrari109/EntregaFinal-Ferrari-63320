@@ -1,5 +1,4 @@
-/* Esta es la clase alumno donde se maneja al alumno saca el promedio y crea los tr*/
-
+/* Esta es la clase alumno donde se maneja al alumno, saca el promedio y crea los tr */
 class alumno {
     constructor(nombre, apellido, nota1, nota2, nota3) {
         this.nombre = nombre;
@@ -11,7 +10,7 @@ class alumno {
     }
 
     calcularPromedio() {
-        return (this.nota1 + this.nota2 + this.nota3) / 3;
+        return ((this.nota1 + this.nota2 + this.nota3) / 3).toFixed(2);
     }
 
     crearTr() {
@@ -27,19 +26,12 @@ class alumno {
 
         tdNombre.innerText = this.nombre;
         tdApellido.innerText = this.apellido;
-        tdPromedio.innerText = this.promedio.toFixed(2);
+        tdPromedio.innerText = this.promedio;
 
-        const spanNota1 = document.createElement("span");
-        spanNota1.innerText = this.nota1;
-        spanNota1.addEventListener("click", () => clickSpan(tdNota1, spanNota1, this, "nota1"));
-
-        const spanNota2 = document.createElement("span");
-        spanNota2.innerText = this.nota2;
-        spanNota2.addEventListener("click", () => clickSpan(tdNota2, spanNota2, this, "nota2"));
-
-        const spanNota3 = document.createElement("span");
-        spanNota3.innerText = this.nota3;
-        spanNota3.addEventListener("click", () => clickSpan(tdNota3, spanNota3, this, "nota3"));
+        // Agregar listeners a las notas
+        const spanNota1 = crearSpanEditable(this.nota1, tdNota1, this, "nota1");
+        const spanNota2 = crearSpanEditable(this.nota2, tdNota2, this, "nota2");
+        const spanNota3 = crearSpanEditable(this.nota3, tdNota3, this, "nota3");
 
         tdNota1.append(spanNota1);
         tdNota2.append(spanNota2);
@@ -55,39 +47,78 @@ class alumno {
         return tr;
     }
 }
-/* Esta funcion se encarga de buscar el alumno en la tabla*/
+
+/* Crear span editable */
+function crearSpanEditable(valor, td, alumno, key) {
+    const span = document.createElement("span");
+    span.innerText = valor;
+    span.addEventListener("click", () => {
+        const input = document.createElement("input");
+        input.type = "number";
+        input.value = valor;
+        input.addEventListener("blur", () => {
+            const nuevoValor = parseFloat(input.value);
+            if (nuevoValor >= 0 && nuevoValor <= 10) {
+                alumno[key] = nuevoValor;
+                alumno.promedio = alumno.calcularPromedio();
+                guardarEnLS();
+                renderizarTablaAlumnos();
+            } else {
+                Swal.fire("Error", "La nota debe estar entre 0 y 10", "error");
+            }
+        });
+        td.innerHTML = "";
+        td.appendChild(input);
+        input.focus();
+    });
+    return span;
+}
+
+/* Buscar alumnos */
 function buscarAlumno() {
     const value = inputBuscarAlumno.value.toLowerCase();
-    alumnosFiltrados = alumnos.filter((el) => el.nombre.toLowerCase().includes(value));
+    alumnosFiltrados = alumnos.filter((el) =>
+        el.nombre.toLowerCase().includes(value) || el.apellido.toLowerCase().includes(value)
+    );
     renderizarTablaAlumnos();
 }
-/* Esta funcion se encargar de guardar en localStorage*/ 
+
+/* Guardar en localStorage */
 function guardarEnLS() {
     localStorage.setItem("alumnos", JSON.stringify(alumnos));
 }
- 
-function trasformarAlumnosLocalStorage(alumnosJSON) {
+
+function transformarAlumnosLocalStorage(alumnosJSON) {
     if (!alumnosJSON) return [];
-    return alumnosJSON.map((data) => new alumno(data.nombre, data.apellido, data.nota1, data.nota2, data.nota3));
+    return alumnosJSON.map(
+        (data) => new alumno(data.nombre, data.apellido, data.nota1, data.nota2, data.nota3)
+    );
 }
 
-function obtenerdeLS() {
-    const alumnosLS = trasformarAlumnosLocalStorage(JSON.parse(localStorage.getItem("alumnos")));
-    return alumnosLS.length > 0 ? alumnosLS : [
-        new alumno("Nahuel", "Ferrari", 8, 9, 10),
-        new alumno("Agustin", "Fernandez", 8, 8, 6)
-    ];
+function obtenerDeLS() {
+    const alumnosLS = transformarAlumnosLocalStorage(JSON.parse(localStorage.getItem("alumnos")));
+    return alumnosLS.length > 0
+        ? alumnosLS
+        : [
+            new alumno("Nahuel", "Ferrari", 8, 9, 10),
+            new alumno("Agustín", "Fernández", 7, 8, 9),
+        ];
 }
 
-/* Esta funcion crea al alumno y pone un alerta cuando esta creado */
+/* Crear alumno */
 function crearAlumno(e) {
     e.preventDefault();
 
-    const nombre = document.getElementById("nombreAlumno").value;
-    const apellido = document.getElementById("apellidoAlumno").value;
+    const nombre = document.getElementById("nombreAlumno").value.trim();
+    const apellido = document.getElementById("apellidoAlumno").value.trim();
     const nota1 = parseFloat(document.getElementById("nota1Alumno").value);
     const nota2 = parseFloat(document.getElementById("nota2Alumno").value);
     const nota3 = parseFloat(document.getElementById("nota3Alumno").value);
+
+    if (!nombre || !apellido || isNaN(nota1) || isNaN(nota2) || isNaN(nota3)) {
+        Swal.fire("Error", "Todos los campos son obligatorios y deben ser válidos", "error");
+        return;
+    }
 
     const nuevoAlumno = new alumno(nombre, apellido, nota1, nota2, nota3);
     alumnos.push(nuevoAlumno);
@@ -95,41 +126,41 @@ function crearAlumno(e) {
 
     guardarEnLS();
     renderizarTablaAlumnos();
-    alert("Alumno agregado");
+    Swal.fire("Éxito", "Alumno agregado correctamente", "success");
 }
-/* Esta funcion elimia al alumno*/
-function eliminarAlumno(alumno) {
-    alumnos = alumnos.filter((el) => el !== alumno);
-    alumnosFiltrados = [...alumnos];
-    guardarEnLS();
-    renderizarTablaAlumnos();
-}
-/* Esta funcion sirve para modificar las notas de los alumnos*/
-function clickSpan(td, span, alumno, key) {
-    const input = document.createElement("input");
-    input.type = "number";
-    input.value = alumno[key];
-    input.addEventListener("change", () => {
-        alumno[key] = parseFloat(input.value);
-        alumno.promedio = alumno.calcularPromedio();
-        guardarEnLS();
-        renderizarTablaAlumnos();
-    });
 
-    td.append(input);
-    span.style.display = "none";
+/* Eliminar alumno */
+function eliminarAlumno(alumno) {
+    Swal.fire({
+        title: "¿Estás seguro?",
+        text: "No podrás deshacer esta acción",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            alumnos = alumnos.filter((el) => el !== alumno);
+            alumnosFiltrados = [...alumnos];
+            guardarEnLS();
+            renderizarTablaAlumnos();
+            Swal.fire("Eliminado", "El alumno fue eliminado", "success");
+        }
+    });
 }
-/* Esta funcion renderiza constante mente la tabla para que se agregue o desaparezcan los alumnos*/
+
+/* Renderizar tabla */
 function renderizarTablaAlumnos() {
     tbodyAlumnos.innerHTML = "";
     alumnosFiltrados.forEach((alumno) => tbodyAlumnos.append(alumno.crearTr()));
 }
-/* PPL */ 
+
+/* PPL */
 const formAgregarAlumno = document.getElementById("formAgregarAlumno");
 const tbodyAlumnos = document.getElementById("tbodyAlumnos");
 const inputBuscarAlumno = document.getElementById("buscarAlumno");
 
-let alumnos = obtenerdeLS();
+let alumnos = obtenerDeLS();
 let alumnosFiltrados = [...alumnos];
 
 renderizarTablaAlumnos();
