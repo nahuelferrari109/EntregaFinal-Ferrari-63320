@@ -1,0 +1,48 @@
+<!DOCTYPE html>  
+<html lang="es">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>Promedio para Alumnos</title>  
+    <style>  
+        table {  
+            margin-top: 1rem;  
+        }  
+        table, th, td {  
+            border: 1px solid rgb(165, 4, 4);  
+            padding: 0.5rem;  
+        }  
+    </style>  
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>  
+</head>  
+<body>  
+    <h1>Promedio para alumnos</h1>  
+    <h2>Filtrar alumno</h2>  
+    <input type="text" id="buscarAlumno" placeholder="Nombre del alumno..." />  
+    <table>  
+        <thead>   
+            <tr>  
+                <th>NOMBRE</th>  
+                <th>APELLIDO</th>  
+                <th>NOTA 1</th>  
+                <th>NOTA 2</th>  
+                <th>NOTA 3</th>  
+                <th>NOTA FINAL</th>  
+                <th>ESTADO</th>  
+                  
+            </tr>  
+        </thead>  
+        <tbody id="tbodyAlumnos">  
+        </tbody>  
+    </table>  
+    <form id="formAgregarAlumno" style="margin-top: 1rem">  
+        <input type="text" id="nombreAlumno" placeholder="Nombre" required />  
+        <input type="text" id="apellidoAlumno" placeholder="Apellido" required />  
+        <input type="number" id="nota1Alumno" placeholder="Nota 1" step="0.1" min="0" max="10" required />  
+        <input type="number" id="nota2Alumno" placeholder="Nota 2" step="0.1" min="0" max="10" required />  
+        <input type="number" id="nota3Alumno" placeholder="Nota 3" step="0.1" min="0" max="10" required />  
+        <button type="submit">Agregar alumno</button>  
+    </form>  
+    <script src="js/main.js" defer></script> <!-- Ruta actualizada -->  
+</body>  
+</html>

@@ -1,0 +1,4 @@
+[  
+    { "id": 1, "nombre": "Nahuel", "apellido": "Ferrari", "nota1": 8, "nota2": 9, "nota3": 10 },  
+    { "id": 2, "nombre": "Agustín", "apellido": "Fernández", "nota1": 7, "nota2": 8, "nota3": 9 }  
+]
